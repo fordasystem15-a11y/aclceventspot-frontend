@@ -1,0 +1,52 @@
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import './Dashboard.css'; // reuse same styles
+
+export default function Events() {
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  return (
+    <div className="dashboard-container">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <h2 className="sidebar-title">ACLC System</h2>
+        <nav>
+          <ul>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/events" className="active-link">Events</a></li>
+            <li><a href="/blogs">Blogs</a></li>
+            {user?.role === 'admin' && <li><a href="/users">Users</a></li>}
+          </ul>
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <div className="main-content">
+        <header className="navbar">
+          <span>Welcome, {user?.name}</span>
+          <button
+            onClick={() => {
+              logout();
+              navigate('/login');
+            }}
+            className="logout-button"
+          >
+            Logout
+          </button>
+        </header>
+
+        <section className="content-card">
+          <h2>Events</h2>
+          <p>Here you can list, create, and manage events.</p>
+          <button className="auth-button">+ Add Event</button>
+          <ul style={{ marginTop: '15px' }}>
+            <li>Event 1: ACLC Anniversary</li>
+            <li>Event 2: Tech Seminar</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  );
+}

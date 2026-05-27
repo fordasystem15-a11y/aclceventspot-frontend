@@ -1,0 +1,100 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Left side */
+.login-left {
+  flex: 1;
+  text-align: center;
+  padding: 40px;
+}
+
+.login-logo {
+  width: 80px;
+  margin-bottom: 20px;
+}
+
+.login-tagline {
+  font-size: 2.5rem;
+  color: #0A1F44;
+  font-weight: 700;
+}
+
+.login-tagline span {
+  color: #1877F2; /* Facebook blue */
+}
+
+/* Right side */
+.login-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.login-form {
+  background: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: center;
+}
+
+.login-form h2 {
+  margin-bottom: 20px;
+  color: #0A1F44;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #1877F2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.login-btn:hover {
+  background-color: #165dc1;
+}
+
+.forgot-link {
+  display: block;
+  margin: 10px 0;
+  color: #1877F2;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 12px;
+  background: #fff;
+  color: #1877F2;
+  border: 1px solid #1877F2;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.register-btn:hover {
+  background-color: #e7f0ff;
+}

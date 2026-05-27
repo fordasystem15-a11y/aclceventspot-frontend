@@ -1,0 +1,80 @@
+/* ✅ Profile box layout */
+.profile-menu {
+  display: flex;
+  align-items: center;
+  background-color: #0A1F44; /* ACLC dark blue */
+  color: #E6E9D8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: background 0.3s ease;
+}
+
+.profile-menu:hover {
+  background-color: #132a66;
+}
+
+/* ✅ Avatar + name side by side */
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between avatar and name */
+}
+
+/* ✅ Avatar circle */
+.profile-avatar .avatar-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #2F3545;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: #E6E9D8;
+}
+
+/* ✅ Name beside avatar */
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.profile-name {
+  font-weight: 600;
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ✅ Profile button below name */
+.profile-button {
+  background: none;
+  border: none;
+  color: #E6E9D8;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+
+.profile-button:hover {
+  text-decoration: underline;
+}
+
+/* ✅ Logout button */
+.logout-button {
+  background: none;
+  border: none;
+  color: #C8102E;
+  font-size: 18px;
+  cursor: pointer;
+  margin-left: auto;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.logout-button:hover {
+  color: #E6E9D8;
+  transform: scale(1.2);
+}

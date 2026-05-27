@@ -1,0 +1,133 @@
+.sidebar {
+  width: 220px;
+  background-color: #0a1f44; /* ACLC deep blue */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Top section: logo + menu */
+.sidebar-top {
+  flex-grow: 1; /* take available vertical space */
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.sidebar-logo {
+  width: 45px;
+  height: 45px;
+  margin-right: 10px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.sidebar-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  color: #ccc;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-link:hover {
+  background-color: #132c5c;
+  color: #fff;
+}
+
+.sidebar-link.active {
+  background-color: #e63946;
+  color: #fff;
+}
+
+.icon {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+/* Footer pinned at bottom */
+.sidebar-footer {
+  position: sticky;
+  bottom: 20px;
+  padding-top: 20px;
+}
+
+/* Burger button */
+.menu-button {
+  background-color: #0a1f44;
+  color: #fff;
+  border: 1px solid #e63946;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.menu-button:hover {
+  background-color: #e63946;
+}
+
+/* Dropdown menu */
+.sidebar-footer .dropdown-menu {
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+  background-color: #132c5c;
+  border-radius: 6px;
+  padding: 10px;
+  z-index: 1000;
+  min-width: 140px;
+}
+
+/* Dropdown items */
+.dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  background: none;
+  border: none;
+  color: #fff !important;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #e63946;
+  color: #fff !important;
+}
+
+/* Top section: logo + menu */
+.sidebar-top {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Footer pinned at bottom */
+.sidebar-footer {
+  position: sticky;
+  bottom: 20px;
+  padding-top: 20px;
+}
