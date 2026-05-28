@@ -1,11 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
-import './Auth.css'; // ✅ we’ll restyle this file
+import './Auth.css';
 import aclcLogo from '../assets/aclc-logo.png';
-import api from "../api";
-
+import api from "../api";   // ✅ centralized axios instance
 
 export default function Login({ onClose }) {
   const [email, setEmail] = useState('');
@@ -33,7 +31,8 @@ export default function Login({ onClose }) {
 
     setLoading(true);
     try {
-      const res = await axios.post('https://aclceventspot-backend.onrender.com/api/auth/login', {
+      // ✅ use api instance with baseURL from REACT_APP_API_URL
+      const res = await api.post('/api/auth/login', {
         email,
         password,
       });
@@ -88,7 +87,7 @@ export default function Login({ onClose }) {
             </button>
           </form>
 
-          <a href="" className="forgot-link">Forgot password?</a>
+          <a href="#" className="forgot-link">Forgot password?</a>
 
           <NavLink to="/register" className="auth-link">
             <button className="register-btn">Create new account</button>
