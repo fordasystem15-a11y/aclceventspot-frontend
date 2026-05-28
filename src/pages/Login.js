@@ -87,7 +87,7 @@ export default function Login({ onClose }) {
             </button>
           </form>
 
-          <a href="#" className="forgot-link">Forgot password?</a>
+          <a href="" className="forgot-link">Forgot password?</a>
 
           <NavLink to="/register" className="auth-link">
             <button className="register-btn">Create new account</button>

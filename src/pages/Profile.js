@@ -5,7 +5,7 @@ import './Dashboard.css';
 import axios from 'axios';
 
 export default function Profile() {
-  const { user, setUser, updateAvatar } = useContext(AuthContext);
+  const { user, updateAvatar } = useContext(AuthContext);
   const [avatar, setAvatar] = useState(null);
 
   // Helper function to format birthdate
