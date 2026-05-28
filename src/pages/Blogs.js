@@ -6,7 +6,7 @@ import './ProfileMenu.css';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import api from '../api'; // ✅ use centralized axios instance
+import api from '../api'; // ✅ centralized axios instance
 
 export default function Blogs() {
   const { user, logout } = useContext(AuthContext);
@@ -18,11 +18,15 @@ export default function Blogs() {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // ✅ Helper for flexible image URLs
+  const resolveImage = (path) =>
+    path?.startsWith('http') ? path : `${api.defaults.baseURL}${path}`;
+
   // ✅ Fetch blogs
   const fetchBlogs = async () => {
     try {
       const res = await api.get('/api/blogs', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        headers: { Authorization: localStorage.getItem('token') },
       });
       setBlogs(res.data);
     } catch (err) {
@@ -39,7 +43,7 @@ export default function Blogs() {
     const fetchEvents = async () => {
       try {
         const res = await api.get('/api/events', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          headers: { Authorization: localStorage.getItem('token') },
         });
         setEvents(res.data);
       } catch (err) {
@@ -62,7 +66,7 @@ export default function Blogs() {
       const res = await api.post(
         '/api/blogs',
         { event: selectedEvent, content },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        { headers: { Authorization: localStorage.getItem('token') } }
       );
 
       const eventObj = events.find((ev) => ev._id === selectedEvent);
@@ -92,7 +96,7 @@ export default function Blogs() {
       const res = await api.post(
         `/api/blogs/${blogId}/react`,
         { type },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        { headers: { Authorization: localStorage.getItem('token') } }
       );
       setBlogs((prevBlogs) =>
         prevBlogs.map((b) => (b._id === blogId ? res.data : b))
@@ -116,7 +120,7 @@ export default function Blogs() {
                 <div className="profile-info">
                   <div className="profile-avatar">
                     <img
-                      src={`${api.defaults.baseURL}${user?.avatar || '/uploads/default-avatar.png'}`}
+                      src={resolveImage(user?.avatar || '/uploads/default-avatar.png')}
                       alt="avatar"
                       className="profile-avatar-img"
                     />

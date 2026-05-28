@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import './Dashboard.css';
 import './ProfileMenu.css';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api'; // ✅ use your centralized axios instance
+import api from '../api'; // ✅ centralized axios instance
 
 export default function Events() {
   const { user, logout } = useContext(AuthContext);
@@ -15,11 +15,17 @@ export default function Events() {
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
 
+  // ✅ Helper for flexible image URLs
+  const resolveImage = (path) =>
+    path?.startsWith('http') ? path : `${api.defaults.baseURL}${path}`;
+
   // ✅ Fetch events
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await api.get('/api/events');
+        const res = await api.get('/api/events', {
+          headers: { Authorization: localStorage.getItem('token') },
+        });
         setEvents(res.data);
       } catch (err) {
         console.error('Failed to fetch events:', err.response?.data || err.message);
@@ -41,7 +47,7 @@ export default function Events() {
     try {
       const res = await api.post('/api/events', formData, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: localStorage.getItem('token'),
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -67,7 +73,7 @@ export default function Events() {
                 <div className="profile-info">
                   <div className="profile-avatar">
                     <img
-                      src={`${api.defaults.baseURL}${user?.avatar || '/uploads/default-avatar.png'}`}
+                      src={resolveImage(user?.avatar || '/uploads/default-avatar.png')}
                       alt="avatar"
                       className="profile-avatar-img"
                     />
@@ -121,7 +127,7 @@ export default function Events() {
                 <Link to={`/events/${ev._id}`} className="event-link">
                   <h4 className="event-title-list">{ev.title}</h4>
                   <img
-                    src={`${api.defaults.baseURL}${ev.image}`}
+                    src={resolveImage(ev.image)}
                     alt="Event"
                     className="event-image"
                   />

@@ -12,17 +12,20 @@ export default function EventDetails() {
   const { user } = useContext(AuthContext);
   const [event, setEvent] = useState(null);
   const [commentText, setCommentText] = useState('');
+  const [loading, setLoading] = useState(true); // ✅ added loading state
 
   // ✅ Fetch single event
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         const res = await api.get(`/api/events/${id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          headers: { Authorization: localStorage.getItem('token') },
         });
         setEvent(res.data);
       } catch (err) {
-        console.error(err.response?.data || err.message);
+        console.error('Failed to fetch event:', err.response?.data || err.message);
+      } finally {
+        setLoading(false);
       }
     };
     fetchEvent();
@@ -34,7 +37,7 @@ export default function EventDetails() {
       const res = await api.post(
         `/api/events/${id}/react`,
         { type },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        { headers: { Authorization: localStorage.getItem('token') } }
       );
       setEvent(res.data);
     } catch (err) {
@@ -49,7 +52,7 @@ export default function EventDetails() {
       const res = await api.post(
         `/api/events/${id}/comment`,
         { text: commentText },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        { headers: { Authorization: localStorage.getItem('token') } }
       );
       setEvent(res.data);
       setCommentText('');
@@ -63,7 +66,7 @@ export default function EventDetails() {
     if (window.confirm('Are you sure you want to delete this event?')) {
       try {
         await api.delete(`/api/events/${id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          headers: { Authorization: localStorage.getItem('token') },
         });
         alert('Event deleted successfully!');
         navigate('/events');
@@ -73,7 +76,9 @@ export default function EventDetails() {
     }
   };
 
-  if (!event) return <p>Loading...</p>;
+  // ✅ Loading / Not found states
+  if (loading) return <p>Loading...</p>;
+  if (!event) return <p>Event not found.</p>;
 
   // ✅ Helper for flexible image URLs
   const resolveImage = (path) =>

@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
 import './Dashboard.css';
-import api from '../api'; // ✅ use centralized axios instance
+import api from '../api'; // ✅ centralized axios instance
 
 export default function Profile() {
   const { user, updateAvatar } = useContext(AuthContext);
@@ -22,6 +22,10 @@ export default function Profile() {
     }
   };
 
+  // ✅ Helper for flexible image URLs
+  const resolveImage = (path) =>
+    path?.startsWith('http') ? path : `${api.defaults.baseURL}${path}`;
+
   // ✅ Upload avatar
   const handleAvatarUpload = async (e) => {
     e.preventDefault();
@@ -33,12 +37,15 @@ export default function Profile() {
     try {
       const res = await api.post('/api/users/avatar', formData, {
         headers: { 
-          Authorization: `Bearer ${localStorage.getItem('token')}`, 
+          Authorization: localStorage.getItem('token'), 
           'Content-Type': 'multipart/form-data' 
         }
       });
+
       alert('Avatar updated!');
-      updateAvatar(res.data.avatar);
+      // ✅ Ensure correct URL format before updating
+      const newAvatarPath = resolveImage(res.data.avatar);
+      updateAvatar(newAvatarPath);
     } catch (err) {
       console.error(err.response?.data || err.message);
     }
@@ -57,7 +64,7 @@ export default function Profile() {
           {/* Avatar */}
           <div className="profile-avatar-section">
             <img 
-              src={`${api.defaults.baseURL}${user?.avatar || '/uploads/default-avatar.png'}`} 
+              src={resolveImage(user?.avatar || '/uploads/default-avatar.png')} 
               alt="avatar" 
               className="profile-avatar-large" 
             />

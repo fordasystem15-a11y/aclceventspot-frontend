@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './Users.css';
-import api from '../api'; // ✅ use centralized axios instance
+import api from '../api'; // ✅ centralized axios instance
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -15,7 +15,7 @@ export default function Users() {
       try {
         const token = localStorage.getItem('token');
         const res = await api.get('/api/admin/users', {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: token },
         });
         setUsers(res.data);
       } catch (err) {
@@ -32,7 +32,7 @@ export default function Users() {
       const res = await api.put(
         `/api/admin/promote/${id}`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: token } }
       );
       toast.success(res.data.message);
       setUsers(users.map((u) => (u._id === id ? res.data.user : u)));
@@ -47,7 +47,7 @@ export default function Users() {
       const res = await api.put(
         `/api/admin/demote/${id}`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: token } }
       );
       toast.success(res.data.message);
       setUsers(users.map((u) => (u._id === id ? res.data.user : u)));

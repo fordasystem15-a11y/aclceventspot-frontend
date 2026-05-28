@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
         const parsedUser = JSON.parse(savedUser);
         setUser(parsedUser);
       } catch (err) {
-        console.error("Failed to parse saved user:", err);
+        console.error('Failed to parse saved user:', err);
         localStorage.removeItem('user');
       }
     }
@@ -32,14 +32,19 @@ export const AuthProvider = ({ children }) => {
         address: data.user.address,
         phone: data.user.phone,
         birthdate: data.user.birthdate,
-        avatar: data.user.avatar || '/uploads/default-avatar.png', // ✅ include avatar
+        avatar: data.user.avatar || '/uploads/default-avatar.png',
       };
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
     }
+
+    // ✅ Always store token with Bearer prefix
     if (data.token) {
-      setToken(data.token);
-      localStorage.setItem('token', data.token);
+      const bearerToken = data.token.startsWith('Bearer ')
+        ? data.token
+        : `Bearer ${data.token}`;
+      setToken(bearerToken);
+      localStorage.setItem('token', bearerToken);
     }
   };
 
