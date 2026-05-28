@@ -12,7 +12,8 @@ export default function EventDetails() {
   const { user } = useContext(AuthContext);
   const [event, setEvent] = useState(null);
   const [commentText, setCommentText] = useState('');
-  const [loading, setLoading] = useState(true); // ✅ added loading state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   // ✅ Fetch single event
   useEffect(() => {
@@ -24,6 +25,7 @@ export default function EventDetails() {
         setEvent(res.data);
       } catch (err) {
         console.error('Failed to fetch event:', err.response?.data || err.message);
+        setError('Failed to load event details. Please check your backend connection.');
       } finally {
         setLoading(false);
       }
@@ -76,13 +78,16 @@ export default function EventDetails() {
     }
   };
 
-  // ✅ Loading / Not found states
-  if (loading) return <p>Loading...</p>;
-  if (!event) return <p>Event not found.</p>;
-
   // ✅ Helper for flexible image URLs
   const resolveImage = (path) =>
-    path?.startsWith('http') ? path : `${api.defaults.baseURL}${path}`;
+    path?.startsWith('http')
+      ? path
+      : `https://aclceventspot-backend.onrender.com${path}`;
+
+  // ✅ Loading / Error / Not found states
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (!event) return <p>Event not found.</p>;
 
   return (
     <div className="dashboard-container">
