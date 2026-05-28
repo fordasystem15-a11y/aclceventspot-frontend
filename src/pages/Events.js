@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import './Dashboard.css';
 import './ProfileMenu.css';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api'; // ✅ use your centralized axios instance
 
 export default function Events() {
   const { user, logout } = useContext(AuthContext);
@@ -18,8 +18,12 @@ export default function Events() {
   // ✅ Fetch events
   useEffect(() => {
     const fetchEvents = async () => {
-      const res = await axios.get('http://localhost:5000/api/events');
-      setEvents(res.data);
+      try {
+        const res = await api.get('/api/events');
+        setEvents(res.data);
+      } catch (err) {
+        console.error('Failed to fetch events:', err.response?.data || err.message);
+      }
     };
     fetchEvents();
   }, []);
@@ -35,15 +39,18 @@ export default function Events() {
     formData.append('image', image);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/events', formData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'multipart/form-data' }
+      const res = await api.post('/api/events', formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'multipart/form-data',
+        },
       });
       setEvents([res.data, ...events]);
       setTitle('');
       setDescription('');
       setImage(null);
     } catch (err) {
-      console.error(err.response?.data || err.message);
+      console.error('Failed to create event:', err.response?.data || err.message);
     }
   };
 
@@ -60,7 +67,7 @@ export default function Events() {
                 <div className="profile-info">
                   <div className="profile-avatar">
                     <img
-                      src={`http://localhost:5000${user?.avatar || '/uploads/default-avatar.png'}`}
+                      src={`${api.defaults.baseURL}${user?.avatar || '/uploads/default-avatar.png'}`}
                       alt="avatar"
                       className="profile-avatar-img"
                     />
@@ -87,7 +94,6 @@ export default function Events() {
         <section className="content-card">
           <h2>Events</h2>
 
-          {/* Admin/Superadmin can post */}
           {(user?.role === 'admin' || user?.role === 'superadmin') && (
             <form onSubmit={handleCreateEvent} style={{ marginBottom: '20px' }}>
               <input
@@ -104,23 +110,18 @@ export default function Events() {
                 className="auth-input"
                 rows="3"
               />
-              <input
-                type="file"
-                onChange={(e) => setImage(e.target.files[0])}
-              />
+              <input type="file" onChange={(e) => setImage(e.target.files[0])} />
               <button type="submit" className="auth-button">POST</button>
             </form>
           )}
 
-          {/* ✅ Events grid */}
           <div className="events-grid">
-            {events.map(ev => (
+            {events.map((ev) => (
               <div key={ev._id} className="event-card">
                 <Link to={`/events/${ev._id}`} className="event-link">
-                  {/* ✅ Show only title in card */}
                   <h4 className="event-title-list">{ev.title}</h4>
                   <img
-                    src={`http://localhost:5000${ev.image}`}
+                    src={`${api.defaults.baseURL}${ev.image}`}
                     alt="Event"
                     className="event-image"
                   />
