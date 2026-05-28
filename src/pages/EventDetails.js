@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import './Dashboard.css';
 import './ProfileMenu.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../api'; // ✅ use centralized axios instance
+import api from '../api'; // ✅ centralized axios instance
 
 export default function EventDetails() {
   const { id } = useParams();
@@ -75,6 +75,10 @@ export default function EventDetails() {
 
   if (!event) return <p>Loading...</p>;
 
+  // ✅ Helper for flexible image URLs
+  const resolveImage = (path) =>
+    path?.startsWith('http') ? path : `${api.defaults.baseURL}${path}`;
+
   return (
     <div className="dashboard-container">
       <Sidebar user={user} />
@@ -99,7 +103,7 @@ export default function EventDetails() {
             {/* Left side: Picture */}
             <div className="event-image-box">
               <img
-                src={`${api.defaults.baseURL}${event.image}`}
+                src={resolveImage(event.image)}
                 alt="Event"
                 className="event-image"
               />
@@ -158,7 +162,7 @@ export default function EventDetails() {
                 {event.comments.map((c, i) => (
                   <div key={i} className="comment-item">
                     <img
-                      src={`${api.defaults.baseURL}${c.avatar || '/uploads/default-avatar.png'}`}
+                      src={resolveImage(c.avatar || '/uploads/default-avatar.png')}
                       alt="avatar"
                       className="comment-avatar"
                     />
@@ -169,7 +173,7 @@ export default function EventDetails() {
                 ))}
                 <div className="comment-input">
                   <img
-                    src={`${api.defaults.baseURL}${user?.avatar || '/uploads/default-avatar.png'}`}
+                    src={resolveImage(user?.avatar || '/uploads/default-avatar.png')}
                     alt="avatar"
                     className="comment-avatar"
                   />
