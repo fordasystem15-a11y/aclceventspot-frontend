@@ -4,9 +4,9 @@ import Sidebar from '../components/Sidebar';
 import './Dashboard.css';
 import './ProfileMenu.css';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';   // ✅ toast notifications
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import api from '../api'; // ✅ use centralized axios instance
 
 export default function Blogs() {
   const { user, logout } = useContext(AuthContext);
@@ -21,12 +21,12 @@ export default function Blogs() {
   // ✅ Fetch blogs
   const fetchBlogs = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/blogs', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      const res = await api.get('/api/blogs', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       setBlogs(res.data);
     } catch (err) {
-      console.error(err.response?.data || err.message);
+      console.error('Failed to fetch blogs:', err.response?.data || err.message);
     }
   };
 
@@ -38,12 +38,12 @@ export default function Blogs() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/events', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        const res = await api.get('/api/events', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         setEvents(res.data);
       } catch (err) {
-        console.error(err.response?.data || err.message);
+        console.error('Failed to fetch events:', err.response?.data || err.message);
       }
     };
     fetchEvents();
@@ -59,34 +59,27 @@ export default function Blogs() {
 
     try {
       setLoading(true);
-      const res = await axios.post('http://localhost:5000/api/blogs', {
-        event: selectedEvent,
-        content,
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      const res = await api.post(
+        '/api/blogs',
+        { event: selectedEvent, content },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
 
-      // ✅ Optimistically show blog immediately
-      const eventObj = events.find(ev => ev._id === selectedEvent);
+      const eventObj = events.find((ev) => ev._id === selectedEvent);
       const newBlog = {
         ...res.data,
         event: { title: eventObj?.title || 'Unknown Event' },
         author: { name: user.name, avatar: user.avatar },
-        reactions: { like: [], love: [], wow: [] } // initialize reactions
+        reactions: { like: [], love: [], wow: [] },
       };
 
-      setBlogs(prevBlogs => [newBlog, ...prevBlogs]);
-
+      setBlogs((prevBlogs) => [newBlog, ...prevBlogs]);
       toast.success('Blog posted successfully! 🎉');
-
-      // ✅ Re-fetch to replace with fully populated data
       fetchBlogs();
-
-      // Clear form
       setSelectedEvent('');
       setContent('');
     } catch (err) {
-      console.error(err.response?.data || err.message);
+      console.error('Failed to post blog:', err.response?.data || err.message);
       toast.error('Failed to post blog.');
     } finally {
       setLoading(false);
@@ -96,18 +89,16 @@ export default function Blogs() {
   // ✅ Handle reactions
   const handleReaction = async (blogId, type) => {
     try {
-      const res = await axios.post(
-        `http://localhost:5000/api/blogs/${blogId}/react`,
+      const res = await api.post(
+        `/api/blogs/${blogId}/react`,
         { type },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
-
-      // Update blog list with new reaction counts
-      setBlogs(prevBlogs =>
-        prevBlogs.map(b => (b._id === blogId ? res.data : b))
+      setBlogs((prevBlogs) =>
+        prevBlogs.map((b) => (b._id === blogId ? res.data : b))
       );
     } catch (err) {
-      console.error(err.response?.data || err.message);
+      console.error('Failed to react:', err.response?.data || err.message);
       toast.error('Failed to react.');
     }
   };
@@ -125,7 +116,7 @@ export default function Blogs() {
                 <div className="profile-info">
                   <div className="profile-avatar">
                     <img
-                      src={`http://localhost:5000${user?.avatar || '/uploads/default-avatar.png'}`}
+                      src={`${api.defaults.baseURL}${user?.avatar || '/uploads/default-avatar.png'}`}
                       alt="avatar"
                       className="profile-avatar-img"
                     />
@@ -153,7 +144,6 @@ export default function Blogs() {
           <h2>Blogs</h2>
           <p>Here you can read and publish blog posts.</p>
 
-          {/* ✅ Blog posting form */}
           {user && (
             <form className="blog-form" onSubmit={handleSubmit}>
               <label>Related Event:</label>
@@ -184,7 +174,6 @@ export default function Blogs() {
             </form>
           )}
 
-          {/* ✅ Blog list */}
           <ul style={{ marginTop: '20px', listStyle: 'none', padding: 0 }}>
             {blogs.map((blog) => (
               <li key={blog._id} className="blog-card">
@@ -195,29 +184,26 @@ export default function Blogs() {
                   Posted on {new Date(blog.createdAt).toLocaleString()}
                 </p>
 
-                {/* ✅ Reactions (same design as EventDetails, with hover + active colors) */}
                 <div className="reactions-container">
-                <button
-                  className={`reaction-btn like ${blog.reactions?.like?.includes(user._id) ? 'active' : ''}`}
-                  onClick={() => handleReaction(blog._id, 'like')}
-                >
-                  👍 {blog.reactions?.like?.length || 0}
-                </button>
-                <button
-                  className={`reaction-btn love ${blog.reactions?.love?.includes(user._id) ? 'active' : ''}`}
-                  onClick={() => handleReaction(blog._id, 'love')}
-                >
-                  ❤️ {blog.reactions?.love?.length || 0}
-                </button>
-                <button
-                  className={`reaction-btn wow ${blog.reactions?.wow?.includes(user._id) ? 'active' : ''}`}
-                  onClick={() => handleReaction(blog._id, 'wow')}
-                >
-                  😮 {blog.reactions?.wow?.length || 0}
-                </button>
-              </div>
-
-
+                  <button
+                    className={`reaction-btn like ${blog.reactions?.like?.includes(user._id) ? 'active' : ''}`}
+                    onClick={() => handleReaction(blog._id, 'like')}
+                  >
+                    👍 {blog.reactions?.like?.length || 0}
+                  </button>
+                  <button
+                    className={`reaction-btn love ${blog.reactions?.love?.includes(user._id) ? 'active' : ''}`}
+                    onClick={() => handleReaction(blog._id, 'love')}
+                  >
+                    ❤️ {blog.reactions?.love?.length || 0}
+                  </button>
+                  <button
+                    className={`reaction-btn wow ${blog.reactions?.wow?.includes(user._id) ? 'active' : ''}`}
+                    onClick={() => handleReaction(blog._id, 'wow')}
+                  >
+                    😮 {blog.reactions?.wow?.length || 0}
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
