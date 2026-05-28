@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
 import './Dashboard.css';
-import axios from 'axios';
+import api from '../api'; // ✅ use centralized axios instance
 
 export default function Profile() {
   const { user, updateAvatar } = useContext(AuthContext);
@@ -31,7 +31,7 @@ export default function Profile() {
     formData.append('avatar', avatar);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/users/avatar', formData, {
+      const res = await api.post('/api/users/avatar', formData, {
         headers: { 
           Authorization: `Bearer ${localStorage.getItem('token')}`, 
           'Content-Type': 'multipart/form-data' 
@@ -57,7 +57,7 @@ export default function Profile() {
           {/* Avatar */}
           <div className="profile-avatar-section">
             <img 
-              src={`http://localhost:5000${user?.avatar || '/uploads/default-avatar.png'}`} 
+              src={`${api.defaults.baseURL}${user?.avatar || '/uploads/default-avatar.png'}`} 
               alt="avatar" 
               className="profile-avatar-large" 
             />
@@ -84,4 +84,3 @@ export default function Profile() {
     </div>
   );
 }
-
