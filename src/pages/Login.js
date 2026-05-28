@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
 import './Auth.css'; // ✅ we’ll restyle this file
 import aclcLogo from '../assets/aclc-logo.png';
+import api from "../api";
 
 
 export default function Login({ onClose }) {
