@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import './Dashboard.css';
 import './ProfileMenu.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api'; // ✅ use centralized axios instance
 
 export default function EventDetails() {
   const { id } = useParams();
@@ -17,8 +17,8 @@ export default function EventDetails() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/events/${id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        const res = await api.get(`/api/events/${id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         setEvent(res.data);
       } catch (err) {
@@ -31,9 +31,11 @@ export default function EventDetails() {
   // ✅ React
   const handleReact = async (type) => {
     try {
-      const res = await axios.post(`http://localhost:5000/api/events/${id}/react`, { type }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      const res = await api.post(
+        `/api/events/${id}/react`,
+        { type },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
       setEvent(res.data);
     } catch (err) {
       console.error(err.response?.data || err.message);
@@ -44,9 +46,11 @@ export default function EventDetails() {
   const handleComment = async () => {
     if (!commentText.trim()) return;
     try {
-      const res = await axios.post(`http://localhost:5000/api/events/${id}/comment`, { text: commentText }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      const res = await api.post(
+        `/api/events/${id}/comment`,
+        { text: commentText },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
       setEvent(res.data);
       setCommentText('');
     } catch (err) {
@@ -58,8 +62,8 @@ export default function EventDetails() {
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this event?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/events/${id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        await api.delete(`/api/events/${id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         alert('Event deleted successfully!');
         navigate('/events');
@@ -95,7 +99,7 @@ export default function EventDetails() {
             {/* Left side: Picture */}
             <div className="event-image-box">
               <img
-                src={`http://localhost:5000${event.image}`}
+                src={`${api.defaults.baseURL}${event.image}`}
                 alt="Event"
                 className="event-image"
               />
@@ -103,7 +107,6 @@ export default function EventDetails() {
 
             {/* Right side: Info */}
             <div className="event-info-box">
-              {/* ✅ Grouped header block */}
               <div className="event-header">
                 <h3 className="event-title">{event.title}</h3>
                 <p className="event-description">{event.description}</p>
@@ -111,19 +114,37 @@ export default function EventDetails() {
 
               <div className="event-reactions">
                 <button
-                  className={`like ${event.reactedBy.some(r => r.user === (user._id || user.id) && r.type === 'like') ? 'active' : ''}`}
+                  className={`like ${
+                    event.reactedBy.some(
+                      (r) => r.user === (user._id || user.id) && r.type === 'like'
+                    )
+                      ? 'active'
+                      : ''
+                  }`}
                   onClick={() => handleReact('like')}
                 >
                   👍 {event.reactions.like}
                 </button>
                 <button
-                  className={`love ${event.reactedBy.some(r => r.user === (user._id || user.id) && r.type === 'love') ? 'active' : ''}`}
+                  className={`love ${
+                    event.reactedBy.some(
+                      (r) => r.user === (user._id || user.id) && r.type === 'love'
+                    )
+                      ? 'active'
+                      : ''
+                  }`}
                   onClick={() => handleReact('love')}
                 >
                   ❤️ {event.reactions.love}
                 </button>
                 <button
-                  className={`wow ${event.reactedBy.some(r => r.user === (user._id || user.id) && r.type === 'wow') ? 'active' : ''}`}
+                  className={`wow ${
+                    event.reactedBy.some(
+                      (r) => r.user === (user._id || user.id) && r.type === 'wow'
+                    )
+                      ? 'active'
+                      : ''
+                  }`}
                   onClick={() => handleReact('wow')}
                 >
                   😮 {event.reactions.wow}
@@ -137,16 +158,18 @@ export default function EventDetails() {
                 {event.comments.map((c, i) => (
                   <div key={i} className="comment-item">
                     <img
-                      src={`http://localhost:5000${c.avatar || '/uploads/default-avatar.png'}`}
+                      src={`${api.defaults.baseURL}${c.avatar || '/uploads/default-avatar.png'}`}
                       alt="avatar"
                       className="comment-avatar"
                     />
-                    <p><strong>{c.user}:</strong> {c.text}</p>
+                    <p>
+                      <strong>{c.user}:</strong> {c.text}
+                    </p>
                   </div>
                 ))}
                 <div className="comment-input">
                   <img
-                    src={`http://localhost:5000${user?.avatar || '/uploads/default-avatar.png'}`}
+                    src={`${api.defaults.baseURL}${user?.avatar || '/uploads/default-avatar.png'}`}
                     alt="avatar"
                     className="comment-avatar"
                   />
