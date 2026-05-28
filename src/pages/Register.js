@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './Auth.css'; // 👈 import the CSS file
-import api from "../api";
+import './Auth.css';
+import api from "../api";   // ✅ centralized axios instance
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -45,7 +44,8 @@ export default function Register() {
 
     setLoading(true);
     try {
-      const res = await axios.post('https://aclceventspot-backend.onrender.com/api/auth/register', {
+      // ✅ use api instance with baseURL from REACT_APP_API_URL
+      const res = await api.post('/api/auth/register', {
         name,
         email,
         password,

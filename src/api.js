@@ -7,4 +7,8 @@ const api = axios.create({
   withCredentials: true,
 });
 
+console.log("API Base URL:", process.env.REACT_APP_API_URL);
+alert("API Base URL: " + process.env.REACT_APP_API_URL);
+
+
 export default api;
