@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import './Dashboard.css';
 import './ProfileMenu.css'; // ✅ new CSS for profile box
+import api from '../api'; // ✅ use centralized axios instance
 
 export default function Dashboard() {
   const { user, logout } = useContext(AuthContext);
@@ -22,7 +23,7 @@ export default function Dashboard() {
                 <div className="profile-info">
                   <div className="profile-avatar">
                     <img
-                      src={`http://localhost:5000${user?.avatar || '/uploads/default-avatar.png'}`}
+                      src={`${api.defaults.baseURL}${user?.avatar || '/uploads/default-avatar.png'}`}
                       alt="avatar"
                       className="profile-avatar-img"
                     />
