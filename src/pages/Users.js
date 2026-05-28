@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // ✅ import toast
+import { toast } from 'react-toastify';
 import './Users.css';
+import api from '../api'; // ✅ use centralized axios instance
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -14,13 +14,13 @@ export default function Users() {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/admin/users', {
-          headers: { Authorization: `Bearer ${token}` }
+        const res = await api.get('/api/admin/users', {
+          headers: { Authorization: `Bearer ${token}` },
         });
         setUsers(res.data);
       } catch (err) {
         setError(err.response?.data?.error || 'Failed to fetch users');
-        toast.error(err.response?.data?.error || 'Failed to fetch users'); // ✅ error toast
+        toast.error(err.response?.data?.error || 'Failed to fetch users');
       }
     };
     fetchUsers();
@@ -29,30 +29,30 @@ export default function Users() {
   const promoteUser = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.put(
-        `http://localhost:5000/api/admin/promote/${id}`,
+      const res = await api.put(
+        `/api/admin/promote/${id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success(res.data.message); // ✅ success toast
-      setUsers(users.map(u => u._id === id ? res.data.user : u));
+      toast.success(res.data.message);
+      setUsers(users.map((u) => (u._id === id ? res.data.user : u)));
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to promote user'); // ✅ error toast
+      toast.error(err.response?.data?.error || 'Failed to promote user');
     }
   };
 
   const demoteUser = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.put(
-        `http://localhost:5000/api/admin/demote/${id}`,
+      const res = await api.put(
+        `/api/admin/demote/${id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success(res.data.message); // ✅ success toast
-      setUsers(users.map(u => u._id === id ? res.data.user : u));
+      toast.success(res.data.message);
+      setUsers(users.map((u) => (u._id === id ? res.data.user : u)));
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to demote user'); // ✅ error toast
+      toast.error(err.response?.data?.error || 'Failed to demote user');
     }
   };
 
@@ -78,7 +78,7 @@ export default function Users() {
             </tr>
           </thead>
           <tbody>
-            {users.map(user => (
+            {users.map((user) => (
               <tr key={user._id}>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
@@ -116,7 +116,6 @@ export default function Users() {
         </table>
       )}
 
-      {/* Confirmation Modal */}
       {confirmAction && (
         <div className="modal-overlay">
           <div className="modal">
